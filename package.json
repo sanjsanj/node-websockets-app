@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server/server.js",
     "start:dev": "nodemon server/server,js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/sanjsanj/node-websockets-app#readme",
   "devDependencies": {
+    "jest": "^23.6.0",
     "nodemon": "^1.18.4"
   },
   "dependencies": {
