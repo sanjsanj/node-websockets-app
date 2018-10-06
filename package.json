@@ -1,9 +1,10 @@
 {
   "name": "websockets-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "node websockets chat app",
   "main": "./server/server.js",
   "scripts": {
+    "push": "git push && git push heroku master",
     "start": "node server/server.js",
     "start:dev": "nodemon server/server,js",
     "test": "jest",
@@ -16,7 +17,7 @@
   "engines": {
     "node": "10.4.1"
   },
-  "author": "",
+  "author": "Sanjay Purswani <sanjsanj@hotmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sanjsanj/node-websockets-app/issues"

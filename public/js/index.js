@@ -43,8 +43,7 @@ messageForm.addEventListener("submit", e => {
   socket.emit(
     "createMessage",
     { from: "User", text: inputElement.value },
-    data => {
-      console.log(data);
+    () => {
       inputElement.value = "";
     }
   );
@@ -55,14 +54,22 @@ locationButton.addEventListener("click", e => {
     return alert("Geolocation not supported by your browser");
   }
 
+  locationButton.disabled = "disabled";
+  locationButton.innerText = "Sending location..."
+  
   navigator.geolocation.getCurrentPosition(
     position => {
+      locationButton.disabled = null;
+      locationButton.innerText = "Send location"
+      
       socket.emit("createLocationMessage", {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       });
     },
     () => {
+      locationButton.disabled = null;
+      locationButton.innerText = "Send location"
       alert("Unable to fetch location");
     }
   );
