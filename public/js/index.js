@@ -1,5 +1,10 @@
 var socket = io();
 
+const messageForm = document.getElementById("message-form");
+const inputElement = document.getElementsByName("message")[0];
+const locationButton = document.getElementById("send-location");
+const ol = document.getElementById("messages");
+
 socket.on("connect", function(event) {
   console.log("Connected to server");
 });
@@ -11,19 +16,54 @@ socket.on("disconnect", function(event) {
 socket.on("newMessage", function(message) {
   console.log("New message:", message);
 
-  const ol = document.getElementById("messages");
   const li = document.createElement("li");
 
   li.innerText = `${message.from}: ${message.text}`;
   ol.appendChild(li);
 });
 
-document.getElementById("message-form").addEventListener("submit", e => {
-  e.preventDefault();
-  const text = document.getElementsByName("message")[0].value;
+socket.on("newLocationMessage", function(message) {
+  console.log("New location:", message);
 
-  socket.emit("createMessage", { from: "User", text }, data => {
-    console.log(data);
-    document.getElementsByName("message")[0].value = "";
-  });
+  const li = document.createElement("li");
+  li.innerText = `${message.from}:`;
+
+  const a = document.createElement("a");
+  a.innerText = "My current location";
+  a.href = message.url;
+  a.target = "_blank";
+
+  li.appendChild(a);
+  ol.appendChild(li);
+});
+
+messageForm.addEventListener("submit", e => {
+  e.preventDefault();
+
+  socket.emit(
+    "createMessage",
+    { from: "User", text: inputElement.value },
+    data => {
+      console.log(data);
+      inputElement.value = "";
+    }
+  );
+});
+
+locationButton.addEventListener("click", e => {
+  if (!navigator.geolocation) {
+    return alert("Geolocation not supported by your browser");
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      socket.emit("createLocationMessage", {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
+    },
+    () => {
+      alert("Unable to fetch location");
+    }
+  );
 });
