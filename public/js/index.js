@@ -5,6 +5,27 @@ const inputElement = document.getElementsByName("message")[0];
 const locationButton = document.getElementById("send-location");
 const ol = document.getElementById("messages");
 
+function scrollToBottom() {
+  const messages = document.getElementById("messages");
+  const newMessage = messages.lastElementChild;
+  const lastMessage = newMessage.previousElementSibling;
+
+  const clientHeight = messages.clientHeight;
+  const scrollTop = messages.scrollTop;
+  const scrollHeight = messages.scrollHeight;
+  const newMessageHeight =
+    newMessage && newMessage.getBoundingClientRect().height;
+  const lastMessageHeight =
+    lastMessage && lastMessage.getBoundingClientRect().height;
+    
+  if (
+    clientHeight + scrollTop + newMessageHeight + lastMessageHeight >=
+    scrollHeight
+  ) {
+    messages.scrollTop = scrollHeight;
+  }
+}
+
 socket.on("connect", function(event) {
   console.log("Connected to server");
 });
@@ -24,11 +45,13 @@ socket.on("newMessage", function(message) {
   const li = document.createElement("li");
   li.innerHTML = html;
   ol.appendChild(li);
+  scrollToBottom();
 });
 
 socket.on("newLocationMessage", function(message) {
   const formattedTime = moment(message.createdAt).format("h:mm a");
-  const template = document.getElementById("location-message-template").innerHTML;
+  const template = document.getElementById("location-message-template")
+    .innerHTML;
   const html = Mustache.render(template, {
     url: message.url,
     from: message.from,
@@ -37,6 +60,7 @@ socket.on("newLocationMessage", function(message) {
   const li = document.createElement("li");
   li.innerHTML = html;
   ol.appendChild(li);
+  scrollToBottom();
 });
 
 messageForm.addEventListener("submit", e => {
